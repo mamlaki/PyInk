@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Menu
+from tkinter import Menu, messagebox
 
 class NoteApp:
   def __init__(self, root):
@@ -27,6 +27,9 @@ class NoteApp:
     self.text_widget.pack(expand=1, fill='both')
 
   def exit_app(self):
+    user_response = messagebox.askokcancel('Exit', 'Are you sure you want to exit?')
+    if user_response:
+      self.root.destroy()
     self.root.destroy()
 
 def run():
