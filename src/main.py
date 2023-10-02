@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import Menu, messagebox
+from tkinter import ttk, Menu, messagebox
 
 class NoteApp:
   def __init__(self, root):
@@ -11,7 +11,8 @@ class NoteApp:
 
     self.file_menu = Menu(self.menu_bar, tearoff=0)
     self.menu_bar.add_cascade(label='File', menu=self.file_menu)
-    self.file_menu.add_command(label='New')
+    self.file_menu.add_command(label='New Tab', command=self.new_tab)
+    self.file_menu.add_command(label='New Window')
     self.file_menu.add_command(label='Open')
     self.file_menu.add_command(label='Save')
     self.file_menu.add_separator()
@@ -23,8 +24,10 @@ class NoteApp:
     self.edit_menu.add_command(label='Copy', command=self.copy_text)
     self.edit_menu.add_command(label='Paste', command=self.paste_text)
 
-    self.text_widget = tk.Text(root, wrap='word')
-    self.text_widget.pack(expand=1, fill='both')
+    self.notebook = ttk.Notebook(root)
+    self.notebook.pack(expand=1, fill='both')
+
+    self.new_tab()
 
   def exit_app(self):
     user_response = messagebox.askokcancel('Exit', 'Are you sure you want to exit?')
@@ -32,14 +35,26 @@ class NoteApp:
       self.root.destroy()
     self.root.destroy()
 
+  def new_tab(self):
+    tab = tk.Frame(self.notebook)
+    self.notebook.add(tab, text='Untitled')
+    text_widget = tk.Text(tab, wrap='word')
+    text_widget.pack(expand=1, fill='both')
+
   def cut_text(self):
-    self.text_widget.event_generate('<<Cut>>')
+    current_tab = self.notebook.select()
+    text_widget = self.notebook.nametowidget(current_tab).winfo_children()[0]
+    text_widget.event_generate('<<Cut>>')
 
   def copy_text(self):
-    self.text_widget.event.generate('<<Copy>>')
+    current_tab = self.notebook.select()
+    text_widget = self.notebook.nametowidget(current_tab).winfo_children()[0]
+    text_widget.event_generate('<<Copy>>')
 
   def paste_text(self):
-    self.text_widget.event_generate('<<Paste>>')
+    current_tab = self.notebook.select()
+    text_widget = self.notebook.nametowidget(current_tab).winfo_children()[0]
+    text_widget.event_generate('<<Paste>>')
 
 def run():
   root = tk.Tk()
