@@ -19,9 +19,9 @@ class NoteApp:
 
     self.edit_menu = Menu(self.menu_bar, tearoff=0)
     self.menu_bar.add_cascade(label='Edit', menu=self.edit_menu)
-    self.edit_menu.add_command(label='Cut')
-    self.edit_menu.add_command(label='Copy')
-    self.edit_menu.add_command(label='Paste')
+    self.edit_menu.add_command(label='Cut', command=self.cut_text)
+    self.edit_menu.add_command(label='Copy', command=self.copy_text)
+    self.edit_menu.add_command(label='Paste', command=self.paste_text)
 
     self.text_widget = tk.Text(root, wrap='word')
     self.text_widget.pack(expand=1, fill='both')
@@ -31,6 +31,15 @@ class NoteApp:
     if user_response:
       self.root.destroy()
     self.root.destroy()
+
+  def cut_text(self):
+    self.text_widget.event_generate('<<Cut>>')
+
+  def copy_text(self):
+    self.text_widget.event.generate('<<Copy>>')
+
+  def paste_text(self):
+    self.text_widget.event_generate('<<Paste>>')
 
 def run():
   root = tk.Tk()
