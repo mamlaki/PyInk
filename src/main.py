@@ -15,7 +15,7 @@ class NoteApp:
     self.file_menu.add_command(label='Open')
     self.file_menu.add_command(label='Save')
     self.file_menu.add_separator()
-    self.file_menu.add_command(label='Exit')
+    self.file_menu.add_command(label='Exit', command=self.exit_app)
 
     self.edit_menu = Menu(self.menu_bar, tearoff=0)
     self.menu_bar.add_cascade(label='Edit', menu=self.edit_menu)
@@ -25,6 +25,9 @@ class NoteApp:
 
     self.text_widget = tk.Text(root, wrap='word')
     self.text_widget.pack(expand=1, fill='both')
+
+  def exit_app(self):
+    self.root.destroy()
 
 def run():
   root = tk.Tk()
