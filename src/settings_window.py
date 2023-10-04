@@ -10,6 +10,9 @@ class SettingsWindow:
     self.font_family_var = tk.StringVar(value = 'Arial')
     self.font_size_var = tk.StringVar(value = '12')
     self.font_style_var = tk.StringVar(value = 'normal')
+    
+    self.font_size_spinbox = tk.Spinbox(self.settings_window, from_ = 1, to = 100, textvariable = self.font_size_var)
+    self.font_size_spinbox.pack()
 
     self.font_family_menu = tk.OptionMenu(self.settings_window, self.font_family_var, *tk.font.families())
     self.font_family_menu.pack()
