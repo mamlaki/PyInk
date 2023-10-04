@@ -1,23 +1,33 @@
 import tkinter as tk
 from tkinter import ttk, Menu, messagebox
 import platform
+import subprocess
+# import winsound
 
 class NoteApp:
   def __init__(self, root):
     self.root = root
     root.title('PyInk')
+    self.settings_window = None
     
     self.menu_bar = Menu(root)
     root.config(menu=self.menu_bar)
 
+    # Hotkey Labels
     if platform.system() == 'Darwin':
       hotkey_new_tab = '⌘T'
-      hotkey_close_tab = '⌘W'
       hotkey_new_window = '⌘N'
+      hotkey_close_tab = '⌘W'
+      hotkey_cut = '⌘X'
+      hotkey_copy = '⌘C'
+      hotkey_paste = '⌘P'
     else:
       hotkey_new_tab = '^T'
-      hotkey_close_tab = '^W'
       hotkey_new_window = '^N'
+      hotkey_close_tab = '^W'
+      hotkey_cut = '^X'
+      hotkey_copy = '^C'
+      hotkey_paste = '^P'
 
     self.file_menu = Menu(self.menu_bar, tearoff=0)
     self.menu_bar.add_cascade(label='File', menu=self.file_menu)
@@ -31,9 +41,15 @@ class NoteApp:
 
     self.edit_menu = Menu(self.menu_bar, tearoff=0)
     self.menu_bar.add_cascade(label='Edit', menu=self.edit_menu)
-    self.edit_menu.add_command(label='Cut', command=self.cut_text)
-    self.edit_menu.add_command(label='Copy', command=self.copy_text)
-    self.edit_menu.add_command(label='Paste', command=self.paste_text)
+    self.edit_menu.add_command(label='Settings', command=self.open_settings)
+    self.edit_menu.add_separator()
+    self.edit_menu.add_command(label=f'Cut ({hotkey_cut})', command=self.cut_text)
+    self.edit_menu.add_command(label=f'Copy ({hotkey_copy})', command=self.copy_text)
+    self.edit_menu.add_command(label=f'Paste ({hotkey_paste})', command=self.paste_text)
+    
+
+    self.settings_button = ttk.Button(root, text='⚙️', command=self.open_settings)
+    self.settings_button.pack(side='right')
 
     self.notebook = ttk.Notebook(root)
     self.notebook.pack(expand=1, fill='both')
@@ -53,6 +69,7 @@ class NoteApp:
     root.bind('<Control-w>', self.close_tab)
 
   def exit_app(self):
+    self.play_alert_sound()
     user_response = messagebox.askokcancel('Exit', 'Are you sure you want to exit?')
     if user_response:
       self.root.destroy()
@@ -90,6 +107,26 @@ class NoteApp:
     current_tab = self.notebook.select()
     text_widget = self.notebook.nametowidget(current_tab).winfo_children()[0]
     text_widget.event_generate('<<Paste>>')
+
+  def open_settings(self):
+    if self.settings_window and self.settings_window.winfo_exists():
+      self.settings_window.focus_set()
+      self.play_alert_sound()
+    else:
+      self.settings_window = tk.Toplevel(self.root)
+      self.settings_window.title('Settings')
+      self.settings_label.pack()
+      self.settings_window.protocol('WM_DELETE_WINDOW', self.on_closing_settings)
+
+  def on_closing_settings(self):
+    self.settings_window = None
+
+  def play_alert_sound(self):
+    if platform.system() == 'Darwin':
+      subprocess.Popen(['afplay', '/System/Library/Sounds/Tink.aiff'])
+    elif platform.system() == 'Windows':
+      # winsound.MessageBeep()
+      pass
 
 def run():
   root = tk.Tk()
