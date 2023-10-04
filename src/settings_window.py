@@ -37,7 +37,17 @@ class SettingsWindow:
     font_config = (font_family, font_size, font_style)
     for tab in self.notebook.tabs():
       text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
-      text_widget.configure(font = font_config)
+      try:
+        selected_text = text_widget.selection_get()
+        if selected_text:
+          start_index = text_widget.index(tk.SEL_FIRST)
+          end_index = text_widget.index(tk.SEL_LAST)
+          text_widget.tag_configure('highlighted', font = font_config)
+          text_widget.tag_add('highlighted', start_index, end_index)
+        else:
+          raise tk.TclError
+      except tk.TclError:
+        text_widget.configure(font = font_config)
 
   def on_closing_settings(self):
     self.settings_window.destroy()

@@ -122,16 +122,6 @@ class NoteApp:
     self.settings_window.destroy()
     self.settings_window = None
 
-  def apply_font(self):
-    font_family = self.font_family_var.get()
-    font_size = int(self.font_size_var.get())
-    font_style = self.font_style_var.get()
-    font_config = (font_family, font_size, font_style)
-    for tab in self.notebook.tabs():
-      text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
-      text_widget.configure(font = font_config)
-
-
   def play_alert_sound(self):
     if platform.system() == 'Darwin':
       subprocess.Popen(['afplay', '/System/Library/Sounds/Tink.aiff'])
