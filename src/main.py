@@ -1,8 +1,10 @@
 import tkinter as tk
-from tkinter import ttk, Menu, messagebox
+from tkinter import ttk, Menu, messagebox, font
 import platform
 import subprocess
 # import winsound
+
+from settings_window import SettingsWindow
 
 class NoteApp:
   def __init__(self, root):
@@ -110,18 +112,25 @@ class NoteApp:
     text_widget.event_generate('<<Paste>>')
 
   def open_settings(self):
-    if self.settings_window and self.settings_window.winfo_exists():
-      self.settings_window.focus_set()
+    if self.settings_window and self.settings_window.window_exists():
+      self.settings_window.focus()
       self.play_alert_sound()
     else:
-      self.settings_window = tk.Toplevel(self.root)
-      self.settings_window.title('Settings')
-      self.settings_window.protocol('WM_DELETE_WINDOW', self.on_closing_settings)
-      center_window(self.settings_window, 400, 300)
+     self.settings_window = SettingsWindow(self.root, self.notebook)
 
   def on_closing_settings(self):
     self.settings_window.destroy()
     self.settings_window = None
+
+  def apply_font(self):
+    font_family = self.font_family_var.get()
+    font_size = int(self.font_size_var.get())
+    font_style = self.font_style_var.get()
+    font_config = (font_family, font_size, font_style)
+    for tab in self.notebook.tabs():
+      text_widget = self.notebook.nametowidget(tab).winfo_children()[0]
+      text_widget.configure(font = font_config)
+
 
   def play_alert_sound(self):
     if platform.system() == 'Darwin':
