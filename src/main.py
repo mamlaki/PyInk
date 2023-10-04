@@ -11,14 +11,17 @@ class NoteApp:
     root.config(menu=self.menu_bar)
 
     if platform.system() == 'Darwin':
-      hotkey = '⌘ T'
+      hotkey_new_tab = '⌘T'
+      hotkey_close_tab = '⌘W'
     else:
-      hotkey = '^ T'
+      hotkey_new_tab = '^T'
+      hotkey_close_tab = '^W'
 
     self.file_menu = Menu(self.menu_bar, tearoff=0)
     self.menu_bar.add_cascade(label='File', menu=self.file_menu)
-    self.file_menu.add_command(label=f'New Tab ({hotkey})', command=self.new_tab)
+    self.file_menu.add_command(label=f'New Tab ({hotkey_new_tab})', command=self.new_tab)
     self.file_menu.add_command(label='New Window')
+    self.file_menu.add_command(label=f'Close Tab ({hotkey_close_tab})', command=self.close_tab)
     self.file_menu.add_command(label='Open')
     self.file_menu.add_command(label='Save')
     self.file_menu.add_separator()
@@ -35,8 +38,13 @@ class NoteApp:
 
     self.new_tab()
 
+    # New Tab Hotkeys
     root.bind('<Command-t>', self.new_tab)
     root.bind('<Control-t>', self.new_tab)
+
+    # Close Tab Hotkeys
+    root.bind('<Command-w>', self.close_tab)
+    root.bind('<Control-w>', self.close_tab)
 
   def exit_app(self):
     user_response = messagebox.askokcancel('Exit', 'Are you sure you want to exit?')
@@ -49,6 +57,13 @@ class NoteApp:
     self.notebook.add(tab, text='Untitled')
     text_widget = tk.Text(tab, wrap='word')
     text_widget.pack(expand=1, fill='both')
+
+  def close_tab(self, event=None):
+    current_tab_index = self.notebook.index(self.notebook.select())
+    if len(self.notebook.tabs()) > 1:
+      self.notebook.forget(current_tab_index)
+    else:
+      messagebox.showinfo('Cannot close tab', 'At least one tab must remain open.')
 
   def cut_text(self):
     current_tab = self.notebook.select()
