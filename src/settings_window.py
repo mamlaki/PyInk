@@ -32,6 +32,9 @@ class SettingsWindow:
     self.color_button = ttk.Button(self.settings_window, text = 'Pick Color', command = self.pick_color)
     self.color_button.pack()
 
+    open_file_button = ttk.Button(self.settings_window, text='Open File', command=note_app.open_file)
+    open_file_button.pack()
+
     self.save_button = ttk.Button(self.settings_window, text='Save', command=note_app.save_text)
     self.save_button.pack()
 

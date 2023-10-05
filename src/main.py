@@ -44,7 +44,7 @@ class NoteApp:
     self.file_menu.add_command(label = f'New Tab ({hotkey_new_tab})', command = self.new_tab)
     self.file_menu.add_command(label = f'New Window ({hotkey_new_window})')
     self.file_menu.add_command(label = f'Close Tab ({hotkey_close_tab})', command = self.close_tab)
-    self.file_menu.add_command(label = 'Open')
+    self.file_menu.add_command(label = 'Open', command=self.open_file)
     self.file_menu.add_command(label = 'Save', command=self.save_text)
     self.file_menu.add_separator()
     self.file_menu.add_command(label = 'Exit', command = self.exit_app)
@@ -82,12 +82,25 @@ class NoteApp:
     root.bind('<Command-s>', self.save_text)
     root.bind('<Control-s>', self.save_text)
 
+    # Open Hotkeys
+    root.bind('<Command-o>', self.open_file)
+    root.bind('<Control-o>', self.open_file)
+
   def save_text(self, event=None):
     text_widget = self.get_current_text_widget()
     file_name = fd.asksaveasfilename(defaultextension='.txt', filetypes=[('Text files', '*.txt'), ('All files', '*.*')])
     if file_name:
       with open(file_name, 'w') as file:
         file.write(text_widget.get('1.0', tk.END))
+
+  def open_file(self, event=None):
+    file_name = fd.askopenfilename(defaultextension='.txt', filetypes=[('Text files', '*.txt'), ('All files', '*.*')])
+    if file_name:
+      with open (file_name, 'r') as file:
+        file_content = file.read()
+      text_widget = self.get_current_text_widget()
+      text_widget.delete('1.0', tk.END)
+      text_widget.insert('1.0', file_content)
 
   def clear_existing_font_tags(self, text_widget, start, end):
     for tag in text_widget.tag_names():
