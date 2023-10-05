@@ -97,6 +97,10 @@ class NoteApp:
     root.bind('<Command-o>', self.open_file)
     root.bind('<Control-o>', self.open_file)
 
+  def change_bg_color(self, color):
+    text_widget = self.get_current_text_widget()
+    text_widget.config(bg=color)
+
   def save_text(self, event=None):
     text_widget = self.get_current_text_widget()
     file_name = fd.asksaveasfilename(defaultextension='.txt', filetypes=[('Text files', '*.txt'), ('All files', '*.*')])
