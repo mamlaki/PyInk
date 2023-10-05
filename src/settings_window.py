@@ -32,6 +32,9 @@ class SettingsWindow:
     self.color_button = ttk.Button(self.settings_window, text = 'Pick Color', command = self.pick_color)
     self.color_button.pack()
 
+    self.save_button = ttk.Button(self.settings_window, text='Save', command=note_app.save_text)
+    self.save_button.pack()
+
     self.settings_window.protocol('WM_DELETE_WINDOW', self.on_closing_settings)
     center_window(self.settings_window, 400, 300)
 

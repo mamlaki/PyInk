@@ -1,5 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, Menu, messagebox, font
+
+import tkinter.filedialog as fd
+
 import platform
 import subprocess
 # import winsound
@@ -42,7 +45,7 @@ class NoteApp:
     self.file_menu.add_command(label = f'New Window ({hotkey_new_window})')
     self.file_menu.add_command(label = f'Close Tab ({hotkey_close_tab})', command = self.close_tab)
     self.file_menu.add_command(label = 'Open')
-    self.file_menu.add_command(label = 'Save')
+    self.file_menu.add_command(label = 'Save', command=self.save_text)
     self.file_menu.add_separator()
     self.file_menu.add_command(label = 'Exit', command = self.exit_app)
 
@@ -74,6 +77,17 @@ class NoteApp:
     # Close Tab Hotkeys
     root.bind('<Command-w>', self.close_tab)
     root.bind('<Control-w>', self.close_tab)
+
+    # Save Hotkeys
+    root.bind('<Command-s>', self.save_text)
+    root.bind('<Control-s>', self.save_text)
+
+  def save_text(self, event=None):
+    text_widget = self.get_current_text_widget()
+    file_name = fd.asksaveasfilename(defaultextension='.txt', filetypes=[('Text files', '*.txt'), ('All files', '*.*')])
+    if file_name:
+      with open(file_name, 'w') as file:
+        file.write(text_widget.get('1.0', tk.END))
 
   def clear_existing_font_tags(self, text_widget, start, end):
     for tag in text_widget.tag_names():
