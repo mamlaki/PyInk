@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, font
+from tkinter import ttk, font, colorchooser
 
 class SettingsWindow:
   def __init__(self, parent, notebook, note_app):
@@ -11,6 +11,7 @@ class SettingsWindow:
     self.font_family_var = tk.StringVar(value = 'Arial')
     self.font_size_var = tk.StringVar(value = '12')
     self.font_style_var = tk.StringVar(value = 'normal')
+    self.font_color_var = tk.StringVar(value = 'black')
     
     self.font_size_spinbox = tk.Spinbox(self.settings_window, from_ = 1, to = 100, textvariable = self.font_size_var)
     self.font_size_spinbox.pack()
@@ -28,18 +29,25 @@ class SettingsWindow:
     apply_font_to_all_button = ttk.Button(self.settings_window, text = 'Apply to All', command = lambda: self.apply_font_to_all_tabs())
     apply_font_to_all_button.pack()
 
+    self.color_button = ttk.Button(self.settings_window, text = 'Pick Color', command = self.pick_color)
+    self.color_button.pack()
+
     self.settings_window.protocol('WM_DELETE_WINDOW', self.on_closing_settings)
     center_window(self.settings_window, 400, 300)
 
   def apply_font(self, note_app):
     print('apply_font called')
     font_config = (self.font_family_var.get(), int(self.font_size_var.get()), self.font_style_var.get())
-    note_app.apply_font(*font_config) 
+    note_app.apply_font(*font_config, self.font_color_var.get()) 
 
   def apply_font_to_all_tabs(self):
     font_config = (self.font_family_var.get(), int(self.font_size_var.get()), self.font_style_var.get())
-    self.note_app.apply_font_to_all(*font_config)
+    self.note_app.apply_font_to_all(*font_config, self.font_color_var.get())
 
+  def pick_color(self):
+    color = colorchooser.askcolor()[1]
+    if color:
+      self.font_color_var.set(color)
 
   def window_exists(self):
     return self.settings_window.winfo_exists()
