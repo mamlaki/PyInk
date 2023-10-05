@@ -9,6 +9,17 @@ import subprocess
 
 from settings_window import SettingsWindow
 
+class CountLabel(tk.Label):
+  def __init__(self, parent, **kwargs):
+    super().__init__(parent, **kwargs)
+    self.word_count = 0
+    self.char_count = 0
+
+  def update_counts(self, word_count, char_count):
+    self.word_count = word_count
+    self.char_count = char_count
+    self.config(text=f'Words: {self.word_count}  Characters: {self.char_count}')
+
 class NoteApp:
   def __init__(self, root):
     self.root = root
@@ -180,6 +191,14 @@ class NoteApp:
       self.root.destroy()
     self.root.destroy()
 
+  def update_counts(self, event, text_widget, count_label):
+    if text_widget.edit_modified():
+      content = text_widget.get('1.0', 'end-1c')
+      word_count = len(content.split())
+      char_count = len(content)
+      count_label.update_counts(word_count, char_count)
+      text_widget.edit_modified(False)
+
   def new_tab(self, event = None):
     tab = tk.Frame(self.notebook)
     tab.font_config = self.current_font_config
@@ -187,9 +206,12 @@ class NoteApp:
     self.notebook.add(tab, text = 'Untitled')
     text_widget = tk.Text(tab, wrap = 'word')
     text_widget.pack(expand=1, fill = 'both')
+    count_label = CountLabel(tab)
+    count_label.pack(side='bottom', anchor='e')
     text_widget.bind('<FocusIn>', self.on_focus_in)
     text_widget.bind('<KeyPress>', self.on_keypress)
-
+    text_widget.bind('<<Modified>>', lambda event, tw=text_widget, cl=count_label: self.update_counts(event, tw, cl))
+    text_widget.edit_modified(True)
 
   def new_window(self, event = None):
     new_root = tk.Tk()
